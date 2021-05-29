@@ -4,7 +4,8 @@ The operating system for USB connectable Mokugyo device.
 
 ![](./img/demo.gif)
 
-日本語による解説は別途ブログで執筆中です。
+日本語による解説記事は以下リンクより。（READMEの全てをカバーしています）  
+[【USB木魚】叩くと光りながら般若心経が入力できるUSB接続型木魚を作ってみた【作り方解説 & ソースコード公開】 \- xor](https://xor.hateblo.jp/entry/20210529/1622257200)
 
 ## Hardware creation
 

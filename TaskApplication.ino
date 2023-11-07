@@ -3,14 +3,15 @@
  * モードによって挙動が変わります
  */
 
-#define SHOT_THRESHOLD_ON           4.0
+#define SHOT_THRESHOLD_ON           3.0
 #define SHOT_THRESHOLD_OFF          1.0
 #define DIRECTION_THRESHOLD_ON      4.0
 #define DIRECTION_THRESHOLD_OFF     2.0
+#define MICLEVEL_DIFF_THRESHOLD     100
 
 
 void TaskApplication(void *pvParameters) {
-  struct { float current = 0.0; float previous = 0.0; } diff;
+  struct { float x = 0.0; float y = 0.0; float z = 0.0; float current = 0.0; float previous = 0.0; } diff;
   struct { boolean current = false; boolean previous = false; } hit;
   struct { boolean left = false; boolean down = false; boolean up = false; boolean right = false; } direction;
   int moveX, moveY;
@@ -24,8 +25,11 @@ void TaskApplication(void *pvParameters) {
     // モード値を更新する
     xQueueReceive(ModeQueue, &mode, 0);
     
-    // 叩かれるZ方向は前回との差分をとる
-    diff.current = acc.current.z - acc.previous.z;
+    // 加速度は前回との差分の絶対値
+    diff.x = acc.current.x - acc.previous.x;
+    diff.y = acc.current.y - acc.previous.y;
+    diff.z = acc.current.z - acc.previous.z;
+    diff.current = abs(sqrt((diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z)));
 
     // マウス移動量の計算（マウスモード・ゲーミングモードのみ）
     moveX = X_DIRECTION * (int)(acc.current.x * acc.current.x * 0.6);
@@ -33,7 +37,8 @@ void TaskApplication(void *pvParameters) {
     
     // 叩かれた瞬間の状態
     // 今回と前回の差分値がいずれも±SHOT_THRESHOLD_ONを超えるとOK
-    if (!hit.previous && abs(diff.previous) >= SHOT_THRESHOLD_ON && abs(diff.current) >= SHOT_THRESHOLD_ON) {
+    // かつマイク差分レベルがMICLEVEL_DIFF_THRESHOLDを超えること
+    if (!hit.previous && mic.diff >= MICLEVEL_DIFF_THRESHOLD && diff.current >= SHOT_THRESHOLD_ON) {
       hit.current = true;
       lastHitMillis = millis();
       // LEDを点灯させる
@@ -45,8 +50,9 @@ void TaskApplication(void *pvParameters) {
       }
       if (mode == MODE_CHANT_SERIAL) Serial.write(SERIAL_HIT_CODE);
       if (mode == MODE_CHANT_MIDI) {
-        MidiUSB.sendMIDI(noteOff); MidiUSB.flush();
-        MidiUSB.sendMIDI(noteOn); MidiUSB.flush();
+        MidiUSB.sendMIDI(noteOff);
+        MidiUSB.sendMIDI(noteOn);
+        MidiUSB.flush();
         noteOffSent = false;
       }
       if (mode == MODE_KEYBOARD) Keyboard.press(KEY_RETURN);
@@ -136,7 +142,8 @@ void TaskApplication(void *pvParameters) {
 
     // MIDI時に最後に叩かれてから一定時間経過後にノートオフを送る
     if (mode == MODE_CHANT_MIDI && !noteOffSent && millis() >= lastHitMillis + AUTO_NOTEOFF_MAX) {
-      MidiUSB.sendMIDI(noteOff); MidiUSB.flush();
+      MidiUSB.sendMIDI(noteOff);
+      MidiUSB.flush();
       noteOffSent = true;
     }
     

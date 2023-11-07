@@ -3,6 +3,7 @@
 #define SCL                   5  // 3軸加速度モジュール I2C SCL - Pro Micro D3
 #define LED_NUM               5  // フルカラーLEDの個数（標準:5）
 #define LED_PIN               10 // フルカラーLED信号線 - Pro Micro D10
+#define MIC_PIN               A0 // マイクモジュール信号線 - Pro Micro A0
 
 
 /* 読経モード CHANTING KEYBOARD MODE */
@@ -20,8 +21,8 @@
 
 
 /* MIDIモード MIDI DRUM MODE */
-#define MIDI_CHANNEL          0    // MIDI送信するチャンネル
-#define MIDI_PITCH            60   // デフォルトの音階（標準ド: 60）
+#define MIDI_CHANNEL          9    // MIDI送信するチャンネル
+#define MIDI_PITCH            38   // デフォルトの音階（標準ド:60・スネア:38）
 #define AUTO_NOTEOFF_MAX      2000 // 次に叩かれなかったときに自動でノートオフするまでのミリ秒
 
 
@@ -50,4 +51,6 @@
 
 /* 開発用(変更の必要ありません) FOR DEVELOPMENT */
 #define RC_RATIO              0.2
+#define MIC_DC_LEVEL          512
+#define MIC_LOOPS             10
 #define STD_GRAVITY           9.80665f

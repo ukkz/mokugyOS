@@ -31,8 +31,11 @@ class Chanting {
     }
 
     char* get() {
-      // 終了している場合は改行のみを返す
-      if (finished || cursor >= EEPROM.length()) return enterCode;
+      // 終了している場合は改行を返してからリセット
+      if (finished || cursor >= EEPROM.length()) {
+        reset();
+        return enterCode;
+      }
       
       // 現在のコードと1つ先のコードをEEPROMから取得
       byte code = EEPROM.read(cursor);

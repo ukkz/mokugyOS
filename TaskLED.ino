@@ -6,17 +6,16 @@
  */
 
 void TaskLED(void *pvParameters) {
-  float hue = 0.0;
-  byte brightness = 0;
   int message = 0;
-  byte currentMode = 0;
-  byte previousMode = 0;
-  RgbColor blue(0, 0, 255);
-  RgbColor yellow(230, 255, 0);
-  RgbColor red(230, 0, 0);
-  RgbColor white(255, 255, 255);
-  RgbColor orange(230, 130, 0);
-  RgbColor black(0, 0, 0);
+  uint16_t hue = 0;
+  uint8_t brightness = 0;
+  uint8_t currentMode = 0;
+  uint8_t previousMode = 0;
+  uint32_t blue   = np.gamma32(np.ColorHSV(43690)); // 65536*2/3
+  uint32_t yellow = np.gamma32(np.ColorHSV(10922)); // 65536/6
+  uint32_t red    = np.gamma32(np.ColorHSV(0));
+  uint32_t white  = np.Color(255, 255, 255);
+  uint32_t orange = np.gamma32(np.ColorHSV(5461));  // 65536/12
   
   for (;;) {
     if (currentMode == 0) {
@@ -24,49 +23,46 @@ void TaskLED(void *pvParameters) {
       previousMode = 0;
       if (brightness > 10) {
         // ある程度明るさがあったらつける
-        for (int i=0; i<np.PixelCount(); i++) {
-          np.SetPixelColor(i, HsbColor(hue + (i * 0.1), 1.0, (float)brightness / 255.0));
-        }
-        brightness -= 10; // 直線減衰
-        hue += 0.006;
-        if (hue >= 1.0) hue -= 1.0; // ループ
-        np.Show();
+        for (uint16_t i=0; i<LED_NUM; i++) np.setPixelColor(i, np.gamma32(np.ColorHSV(hue + (i * 2048), 255, brightness)));
+        brightness -= 7; // 直線減衰
+        hue += 128;
+        np.show();
       } else if (brightness > 0) {
         // けす（これ以降はキューなどからbrightnessが11以上にされないと点灯しない）
         brightness = 0;
-        np.ClearTo(black);
-        np.Show();
+        np.clear();
+        np.show();
       }
     } else if (currentMode != previousMode) {
       // モード切り替え時の単色パターン（国際仏旗色順）
       previousMode = currentMode;
       switch (currentMode) {
         case MODE_CHANT_KEYBOARD:
-          np.ClearTo(blue); // 青
+          np.fill(blue); // 青
           break;
         case MODE_CHANT_SERIAL:
-          np.ClearTo(yellow); // 黄
+          np.fill(yellow); // 黄
           break;
         case MODE_CHANT_MIDI:
-          np.ClearTo(red); // 赤
+          np.fill(red); // 赤
           break;
         case MODE_KEYBOARD:
-          np.ClearTo(white); // 白
+          np.fill(white); // 白
           break;
         case MODE_MOUSE:
-          np.ClearTo(orange); // 樺
+          np.fill(orange); // 樺
           break;
         case MODE_GAMING:
-          np.SetPixelColor(0, blue);
-          np.SetPixelColor(1, yellow);
-          np.SetPixelColor(2, red);
-          np.SetPixelColor(3, white);
-          np.SetPixelColor(4, orange);
+          np.setPixelColor(0, blue);
+          np.setPixelColor(1, yellow);
+          np.setPixelColor(2, red);
+          np.setPixelColor(3, white);
+          np.setPixelColor(4, orange);
           break;
         default:
-          np.ClearTo(black);
+          np.clear();
       }
-      np.Show();
+      np.show();
     }
     
     // 点灯パターンを受け取る（vTaskDelay(1) の代わりにもなる）

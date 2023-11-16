@@ -25,7 +25,8 @@ The operating system for USB connectable Mokugyo device.
   - No need to buy Adafruit's LED because a bit expensive. Recommend NeoPixel compatible LED, like [フルカラーシリアルLEDモジュール \- SWITCH\-SCIENCE](https://www.switch-science.com/catalog/1398/), [NeoPixelフルカラーLEDテープ・5V版各種 – Shigezone Online](https://www.shigezone.com/?product=neopixel_ledtape5v), etc.
   - Only 5 pieces needed.
   - LED strip type is BEST, will helps making it simply.
-- Microphone (optional): [SparkFun Electret Microphone Breakout \- BOB\-12758 \- SparkFun Electronics](https://www.sparkfun.com/products/12758)
+- Microphone ~~(optional)~~: [SparkFun Electret Microphone Breakout \- BOB\-12758 \- SparkFun Electronics](https://www.sparkfun.com/products/12758)
+  - Required from v0.2.
 
 ![](./img/1.png)
 
@@ -103,8 +104,11 @@ Show the repositories here but all of them can be installed by arduino IDE built
 
 - FreeRTOS  
   [feilipu/Arduino\_FreeRTOS\_Library: A FreeRTOS Library for all Arduino AVR Devices \(Uno, Leonardo, Mega, etc\)](https://github.com/feilipu/Arduino_FreeRTOS_Library)
-- NeoPixelBus by Makuna  
-  [Makuna/NeoPixelBus: An Arduino NeoPixel support library supporting a large variety of individually addressable LEDs\. Please refer to the Wiki for more details\. Please use the gitter channel to ask questions as the GitHub Issues feature is used for bug tracking\.](https://github.com/Makuna/NeoPixelBus)
+  - **Note: MUST BE USE VERSION OF 10.4.4-2 OR EARLIER!**
+- ~~NeoPixelBus by Makuna~~ (mokugyOS v0.1 only)  
+  ~~[Makuna/NeoPixelBus: An Arduino NeoPixel support library supporting a large variety of individually addressable LEDs\. Please refer to the Wiki for more details\. Please use the gitter channel to ask questions as the GitHub Issues feature is used for bug tracking\.](https://github.com/Makuna/NeoPixelBus)~~
+- Adafruit NeoPixel Library (mokugyOS v0.2~)  
+  [adafruit/Adafruit\_NeoPixel: Arduino library for controlling single\-wire LED pixels \(NeoPixel, WS2812, etc\.\)](https://github.com/adafruit/Adafruit_NeoPixel)
 - MIDIUSB  
   [arduino\-libraries/MIDIUSB: A MIDI library over USB, based on PluggableUSB](https://github.com/arduino-libraries/MIDIUSB)
 - Adafruit MMA8451 Library  

@@ -79,7 +79,7 @@ void loop() {
   acc.current.x = (mma.x_g * STD_GRAVITY * RC_RATIO) + ((1.0 - RC_RATIO) * acc.previous.x);
   acc.current.y = (mma.y_g * STD_GRAVITY * RC_RATIO) + ((1.0 - RC_RATIO) * acc.previous.y);
   acc.current.z =  mma.z_g * STD_GRAVITY;
-  delay(20);
+  delay(30);
   
   // マイク値（平均と差分）
   mic.previous = mic.current;

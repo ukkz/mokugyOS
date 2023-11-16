@@ -3,10 +3,11 @@
  * モードによって挙動が変わります
  */
 
-#define SHOT_THRESHOLD_ON           3.0
-#define SHOT_THRESHOLD_OFF          1.0
-#define DIRECTION_THRESHOLD_ON      4.0
-#define DIRECTION_THRESHOLD_OFF     2.0
+#define SHOT_THRESHOLD_ON           3.0f
+#define SHOT_THRESHOLD_OFF          0.5f
+#define SHOT_GUARD_MILLISEC         150UL
+#define DIRECTION_THRESHOLD_ON      4.0f
+#define DIRECTION_THRESHOLD_OFF     2.0f
 #define MICLEVEL_DIFF_THRESHOLD     100
 
 
@@ -38,7 +39,12 @@ void TaskApplication(void *pvParameters) {
     // 叩かれた瞬間の状態
     // 今回と前回の差分値がいずれも±SHOT_THRESHOLD_ONを超えるとOK
     // かつマイク差分レベルがMICLEVEL_DIFF_THRESHOLDを超えること
-    if (!hit.previous && mic.diff >= MICLEVEL_DIFF_THRESHOLD && diff.current >= SHOT_THRESHOLD_ON) {
+    if (
+      !hit.previous && 
+      mic.diff >= MICLEVEL_DIFF_THRESHOLD && 
+      diff.current >= SHOT_THRESHOLD_ON && 
+      millis() >= (lastHitMillis + SHOT_GUARD_MILLISEC)
+    ) {
       hit.current = true;
       lastHitMillis = millis();
       // LEDを点灯させる
@@ -62,7 +68,7 @@ void TaskApplication(void *pvParameters) {
     }
     
     // 叩かれフラグを元の状態に戻す
-    if (hit.previous && abs(diff.previous) < SHOT_THRESHOLD_OFF) {
+    if (hit.previous && diff.current <= SHOT_THRESHOLD_OFF) {
       hit.current = false;
       if (mode == MODE_KEYBOARD) Keyboard.release(KEY_RETURN);
       if (mode == MODE_MOUSE) Mouse.release(MOUSE_LEFT);
